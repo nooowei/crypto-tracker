@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 // import { Link } from 'react-router-dom';
 import { Container, Typography, Paper, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails} from '@material-ui/core';
 import { List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
@@ -9,6 +10,8 @@ import { styled, makeStyles, useTheme } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import MoreInfoTable from './more-info-table.component';
+import CoinDataChart from './chart.component';
+import {loadPriceHistory} from '../actions/actions';
 
 // this is Styled Component API using hooks
 const useStyles = makeStyles(theme => ({
@@ -47,7 +50,7 @@ function CoinCardDisplay(props){
                 <ListItemText primary={`Price: ${props.coinData.price}`} />
               </ListItem>
               <ListItem>
-                <ListItemText primary={`24HR Change: ${props.coinData.chg24Hour}`} />
+                <ListItemText primary={`24 Hour Change: ${props.coinData.chg24Hour}`} />
               </ListItem>
             </List>
           </Container>
@@ -55,12 +58,8 @@ function CoinCardDisplay(props){
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
             <Container>
-              <p>chart goes here</p>
-
+              <CoinDataChart/>
               <MoreInfoTable coinData={props.coinData}/>
-
-
-
             </Container>
 
         </ExpansionPanelDetails>
@@ -75,6 +74,7 @@ class CoinCard extends Component{
     constructor(props){
         super(props);
         this.getCoinData = this.getCoinData.bind(this);
+        this.getHistoricalData = this.getHistoricalData.bind(this);
     }
 
     //combine all data into an object and pass it into the View Component
@@ -163,9 +163,79 @@ class CoinCard extends Component{
       return coinData;
     }
 
+    getHistoricalData(timeFrame){
+      console.log(timeFrame);
+      // API params
+      let requestTime = 0;
+      let requestType = "";
+      let requestCoin = this.props.coinName;
+      let skipDay = 1;  // days/hours to skip while rendering chart
+
+      switch(timeFrame){
+        case "MONTHLY":
+          requestTime = 28;
+          requestType = "histoday"
+          skipDay = 4
+          break;
+        case "WEEKLY":
+          requestTime = 7;
+          requestType = "histoday"
+          skipDay = 1;
+          break;
+        case "DAILY":
+          requestTime = 21;
+          requestType = "histohour"
+          skipDay = 3;
+          break;
+        default:
+          requestTime =7;
+          requestType = "histoday";
+          skipDay = 1;
+      }
+
+      let requestString = `https://min-api.cryptocompare.com/data/v2/${requestType}?fsym=${requestCoin}&tsym=USD&limit=${requestTime}`;
+
+      axios.get(requestString).then(res => {
+        // console.log(res.data.Data.Data);
+        // get info from data, and format into an object and pass into props
+        let rawData = res.data.Data.Data;
+
+        let date;
+        let labels = [];  // for stroing dates
+        let data = [];  // for stroing price history data
+
+        // iterate through the data and populate datasets
+        for(let i=requestTime; i>0; i-=skipDay){  //skipping intervals of days/hours to render chart
+          // setting the labels
+          date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
+          labels.push(date);
+
+          //setting the price data
+          data.push(rawData[i].close);
+        }
+
+        // database that will be added to graph data object for charts
+        let datasets = [{
+          data,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        }];
+
+        let graphData = {
+          labels,
+          datasets
+        }
+        // console.log(graphData);
+        this.props.loadPriceHistory(graphData);
+      }
+      ).catch(err => console.log(err));
+
+
+
+    }
+
     render(){
         return (
-          <CoinCardDisplay coinData={this.getCoinData()}/>
+          <CoinCardDisplay coinData={this.getCoinData()} getHistoricalData={this.getHistoricalData()}/>
         )
     }
 
@@ -174,10 +244,16 @@ class CoinCard extends Component{
 const mapStateToProps = (state) => ({
         coinData: state.coinData,
         userData: state.userData,
-        currencyData: state.currencyData
+        currencyData: state.currencyData,
+        priceHistoryData: state.priceHistoryData
+
 })
 
+const mapDispatchToProps = dispatch => ({
+  loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData))
+})
 
 export default connect(
     mapStateToProps,
+    mapDispatchToProps
 )(CoinCard);

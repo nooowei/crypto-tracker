@@ -4,7 +4,7 @@ const userData = (state = {}, action) => {
       case "LOAD_USER":
         return action.user;
       default:
-        return state
+        return state;
     }
   }
   
