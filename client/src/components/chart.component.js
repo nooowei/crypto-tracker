@@ -1,8 +1,9 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import { connect } from 'react-redux';
 
 // VIEW component that renders the historical data chart with Chart JS
-export default function CoinDataChart(props){
+function CoinDataChart(props){
     let dataSet = {
         labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
         datasets:[
@@ -31,7 +32,7 @@ export default function CoinDataChart(props){
     return(
         <div className="chart">
             <Line
-                data={dataSet}
+                data={props.priceHistoryData}
                 options={{
                     title:{
                     display:true,
@@ -49,3 +50,14 @@ export default function CoinDataChart(props){
         </div>
     )
 }
+
+const mapStateToProps = (state) => ({
+  coinData: state.coinData,
+  userData: state.userData,
+  currencyData: state.currencyData,
+  priceHistoryData: state.priceHistoryData
+})
+
+export default connect(
+  mapStateToProps
+)(CoinDataChart);

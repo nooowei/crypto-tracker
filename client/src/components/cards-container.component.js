@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Container } from '@material-ui/core';
 import { connect } from 'react-redux'
-import {loadUser, loadCoin, changeCurrency} from '../actions/actions';
+import {loadUser, loadCoin, changeCurrency, loadPriceHistory} from '../actions/actions';
 
 import CoinCard from './coin-card.component';
 
@@ -17,20 +17,41 @@ class CardsContainer extends Component{
   }
 
   componentDidMount(){
+    // get the table data for all coins
     let coinArrString = this.state.coinArr.toString();
     let initialLoadURL = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${coinArrString}&tsyms=USD,EUR,JPY&api_key=1f84fbac036921128f048004f3765eb58b91b7b7df920876211063157360463d`;
     axios.get(initialLoadURL).then(res =>{
       this.props.loadCoin(res.data.RAW);
-      console.log(res.data.RAW);
+      // console.log(res.data.RAW);
       }
     )
-    // console.log(this.props.currencyData)
+
+    //get price History for all coins
+    this.getHistoricalData();
+
   }
 
-  // for testing only, delete later
-  makeCard(){
-    let price = this.props.coinData
-    return(price);
+  // on load, make API call for past 30 days then save it to props
+  getHistoricalData(){
+    // map each coinArr to request url
+    let callArr = this.state.coinArr.map(name => axios.get(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${name}&tsym=USD&limit=28`));
+
+    // use axios to make request of each coin's history concurrently
+    axios.all(callArr)
+      .then(axios.spread((...response) => {
+
+        // an object for price history, use coinArr and responseArr to cross reference
+        let priceHistory = {};
+
+        for(let i=0; i<this.state.coinArr.length; i++){
+          priceHistory[this.state.coinArr[i]] = response[i].data.Data.Data;
+        }
+
+        console.log(priceHistory);
+
+        this.props.loadPriceHistory(priceHistory);
+      })).catch(err => console.log(err));
+
   }
 
   render(){
@@ -56,13 +77,15 @@ class CardsContainer extends Component{
 const mapStateToProps = (state) => ({
       coinData: state.coinData,
       userData: state.userData,
-      currencyData: state.currencyData
+      currencyData: state.currencyData,
+      priceHistoryData: state.priceHistoryData
 })
 
 const mapDispatchToProps = dispatch => ({
   loadCoin: coins => dispatch(loadCoin(coins)),
   loadUser: user => dispatch(loadUser(user)),
-  changeCurrency: currency => dispatch(changeCurrency(currency))
+  changeCurrency: currency => dispatch(changeCurrency(currency)),
+  loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData))
 })
 
 export default connect(

@@ -233,9 +233,10 @@ class CoinCard extends Component{
 
     }
 
+    // <CoinCardDisplay coinData={this.getCoinData()} getHistoricalData={this.getHistoricalData()}/>
     render(){
         return (
-          <CoinCardDisplay coinData={this.getCoinData()} getHistoricalData={this.getHistoricalData()}/>
+          <CoinCardDisplay coinData={this.getCoinData()}/>
         )
     }
 

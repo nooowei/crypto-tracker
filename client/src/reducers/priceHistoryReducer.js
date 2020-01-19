@@ -1,8 +1,10 @@
 // reducer for updating historical coin data
 
 let initialState = {
-    labels:[],
-    datasets:[]
+    labels:[" "," "," "," "," "," "," "],
+    datasets:[{
+        data:[0,0,0,0,0,0,0]
+    }]
 }
 
 const priceHistoryData = (state = initialState, action) => {
