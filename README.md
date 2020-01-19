@@ -43,3 +43,27 @@ FRONT END
   a. NavBar
   b. Container
   c. CoinCard
+
+
+----------------------------------------------------------------------------------------------
+
+More detail
+1. In the expanded column, add in a table of more details
+	a. 24hr volumn
+	b. market cap
+	c. HIGH24HOUR
+	d. HIGHDAY
+	e. HIGHHOUR
+	f. LOW24HOUR
+	g. LOWDAY
+	h. LOWHOUR
+	i. SUPPLY
+	j. CHANGE24HOUR
+	k. CHANGEDAY
+	- CHANGEHOUR
+	- CHANGEPCT24HOUR
+	- CHANGEPCTDAY
+	- CHANGEPCTHOUR
+
+2. add in a chart built with chart.js
+3. download all icons and display it on the page

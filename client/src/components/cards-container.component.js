@@ -5,7 +5,7 @@ import { Container } from '@material-ui/core';
 import { connect } from 'react-redux'
 import {loadUser, loadCoin, changeCurrency} from '../actions/actions';
 
-import CoinCard from './coin-card-component';
+import CoinCard from './coin-card.component';
 
 // CONTAINER component
 class CardsContainer extends Component{
@@ -36,7 +36,7 @@ class CardsContainer extends Component{
   render(){
     return(
       <div>
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
           <p>{this.props.currencyData} </p>
           {/* <p>{console.log(this.makeCard())}</p> */}
           {this.state.coinArr.map(coinName =>
@@ -53,15 +53,11 @@ class CardsContainer extends Component{
 
 }
 
-const mapStateToProps = (state) => (
-  //this returns an object containing data needed by this connected component
-  // each field in this object will become a prop of this connected component
-    {
+const mapStateToProps = (state) => ({
       coinData: state.coinData,
       userData: state.userData,
       currencyData: state.currencyData
-    }
-)
+})
 
 const mapDispatchToProps = dispatch => ({
   loadCoin: coins => dispatch(loadCoin(coins)),
