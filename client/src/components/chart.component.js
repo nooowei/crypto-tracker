@@ -32,16 +32,12 @@ function CoinDataChart(props){
     return(
         <div className="chart">
             <Line
-                data={props.priceHistoryData}
+                data={props.graphData}
                 options={{
                     title:{
                     display:true,
-                    text:'Largest Cities In '+"chicago",
+                    text:'Price History',
                     fontSize:25
-                    },
-                    legend:{
-                    display:true,
-                    position:'right'
                     }
                 }}
                 />
@@ -55,7 +51,8 @@ const mapStateToProps = (state) => ({
   coinData: state.coinData,
   userData: state.userData,
   currencyData: state.currencyData,
-  priceHistoryData: state.priceHistoryData
+  priceHistoryData: state.priceHistoryData,
+  graphData: state.graphData
 })
 
 export default connect(

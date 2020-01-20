@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Container } from '@material-ui/core';
 import { connect } from 'react-redux'
-import {loadUser, loadCoin, changeCurrency, loadPriceHistory} from '../actions/actions';
+import {loadUser, loadCoin, changeCurrency, loadPriceHistory, loadGraphData} from '../actions/actions';
 
 import CoinCard from './coin-card.component';
 
@@ -34,7 +34,7 @@ class CardsContainer extends Component{
   // on load, make API call for past 30 days then save it to props
   getHistoricalData(){
     // map each coinArr to request url
-    let callArr = this.state.coinArr.map(name => axios.get(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${name}&tsym=USD&limit=28`));
+    let callArr = this.state.coinArr.map(name => axios.get(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${name}&tsym=USD&limit=30`));
 
     // use axios to make request of each coin's history concurrently
     axios.all(callArr)
@@ -78,7 +78,9 @@ const mapStateToProps = (state) => ({
       coinData: state.coinData,
       userData: state.userData,
       currencyData: state.currencyData,
-      priceHistoryData: state.priceHistoryData
+      priceHistoryData: state.priceHistoryData,
+      timeFrameData: state.timeFrameData,
+      graphData: state.graphData
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -86,6 +88,7 @@ const mapDispatchToProps = dispatch => ({
   loadUser: user => dispatch(loadUser(user)),
   changeCurrency: currency => dispatch(changeCurrency(currency)),
   loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData))
+  // loadGraphData: graphData => dispatch(loadGraphData(graphData))
 })
 
 export default connect(

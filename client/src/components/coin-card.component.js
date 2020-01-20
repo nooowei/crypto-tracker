@@ -11,7 +11,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import MoreInfoTable from './more-info-table.component';
 import CoinDataChart from './chart.component';
-import {loadPriceHistory} from '../actions/actions';
+import {loadPriceHistory, chgTimeFrame, loadGraphData} from '../actions/actions';
 
 // this is Styled Component API using hooks
 const useStyles = makeStyles(theme => ({
@@ -75,6 +75,10 @@ class CoinCard extends Component{
         super(props);
         this.getCoinData = this.getCoinData.bind(this);
         this.getHistoricalData = this.getHistoricalData.bind(this);
+    }
+
+    componentDidMount(){
+      this.getHistoricalData();
     }
 
     //combine all data into an object and pass it into the View Component
@@ -163,15 +167,15 @@ class CoinCard extends Component{
       return coinData;
     }
 
-    getHistoricalData(timeFrame){
-      console.log(timeFrame);
+    getHistoricalData(){
+      // console.log(this.props.timeFrame);
       // API params
       let requestTime = 0;
       let requestType = "";
       let requestCoin = this.props.coinName;
       let skipDay = 1;  // days/hours to skip while rendering chart
 
-      switch(timeFrame){
+      switch(this.props.timeFrame){
         case "MONTHLY":
           requestTime = 28;
           requestType = "histoday"
@@ -188,31 +192,36 @@ class CoinCard extends Component{
           skipDay = 3;
           break;
         default:
-          requestTime =7;
+          requestTime = 7;
           requestType = "histoday";
           skipDay = 1;
       }
 
-      let requestString = `https://min-api.cryptocompare.com/data/v2/${requestType}?fsym=${requestCoin}&tsym=USD&limit=${requestTime}`;
 
-      axios.get(requestString).then(res => {
-        // console.log(res.data.Data.Data);
-        // get info from data, and format into an object and pass into props
-        let rawData = res.data.Data.Data;
+      // create a graphData object from props.priceHistory for chart.js to render
+      let rawData = this.props.priceHistoryData[this.props.coinName];
+      console.log(rawData);
+      let date;
+      let labels = [];  // for stroing dates
+      let data = [];  // for stroing price history data
 
-        let date;
-        let labels = [];  // for stroing dates
-        let data = [];  // for stroing price history data
-
+      if(typeof rawData !== 'undefined'){ //check to make sure data has loaded
         // iterate through the data and populate datasets
-        for(let i=requestTime; i>0; i-=skipDay){  //skipping intervals of days/hours to render chart
-          // setting the labels
-          date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
-          labels.push(date);
+        for(let i=rawData.length; i>(rawData.length-requestTime-1); i-=skipDay){  //skipping intervals of days/hours to render chart
+          //check if index out of bound
+          if(typeof rawData[i] !== "undefined"){
+            // setting the labels
+            date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
+            labels.push(date);
 
-          //setting the price data
-          data.push(rawData[i].close);
+            //setting the price data
+            data.push(rawData[i].close);
+          }
         }
+
+        // flip the array to go from latest to earliest
+        labels = labels.reverse();
+        data = data.reverse();
 
         // database that will be added to graph data object for charts
         let datasets = [{
@@ -224,10 +233,47 @@ class CoinCard extends Component{
           labels,
           datasets
         }
-        // console.log(graphData);
-        this.props.loadPriceHistory(graphData);
+        console.log(graphData);
+        this.props.loadGraphData(graphData); //need to change to an action that edits the graph data
+      }else{
+        
       }
-      ).catch(err => console.log(err));
+
+      // let requestString = `https://min-api.cryptocompare.com/data/v2/${requestType}?fsym=${requestCoin}&tsym=USD&limit=${requestTime}`;
+
+      // axios.get(requestString).then(res => {
+      //   // console.log(res.data.Data.Data);
+      //   // get info from data, and format into an object and pass into props
+      //   let rawData = res.data.Data.Data;
+
+      //   let date;
+      //   let labels = [];  // for stroing dates
+      //   let data = [];  // for stroing price history data
+
+      //   // iterate through the data and populate datasets
+      //   for(let i=requestTime; i>0; i-=skipDay){  //skipping intervals of days/hours to render chart
+      //     // setting the labels
+      //     date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
+      //     labels.push(date);
+
+      //     //setting the price data
+      //     data.push(rawData[i].close);
+      //   }
+
+      //   // database that will be added to graph data object for charts
+      //   let datasets = [{
+      //     data,
+      //     backgroundColor: 'rgba(54, 162, 235, 0.6)'
+      //   }];
+
+      //   let graphData = {
+      //     labels,
+      //     datasets
+      //   }
+      //   // console.log(graphData);
+      //   this.props.loadPriceHistory(graphData);
+      // }
+      // ).catch(err => console.log(err));
 
 
 
@@ -246,12 +292,16 @@ const mapStateToProps = (state) => ({
         coinData: state.coinData,
         userData: state.userData,
         currencyData: state.currencyData,
-        priceHistoryData: state.priceHistoryData
+        priceHistoryData: state.priceHistoryData,
+        timeFrameData: state.timeFrameData,
+        graphData: state.graphData
 
 })
 
 const mapDispatchToProps = dispatch => ({
-  loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData))
+  loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData)),
+  chgTimeFrame: timeFrame => dispatch(chgTimeFrame(timeFrame)),
+  loadGraphData: graphData => dispatch(loadGraphData(graphData))
 })
 
 export default connect(

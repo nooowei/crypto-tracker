@@ -17,3 +17,13 @@ export const loadPriceHistory = hisData => ({
     type: 'LOAD_HISDATA',
     hisData
 })
+
+export const chgTimeFrame = timeFrame => ({
+    type: 'CHG_TIMEFRAME',
+    timeFrame
+})
+
+export const loadGraphData = graphData => ({
+    type: 'LOAD_GRAPHDATA',
+    graphData
+})
