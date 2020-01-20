@@ -121,38 +121,11 @@ class CardsContainer extends Component{
             labels,
             datasets
           }
-
+          // adding the single graph to the whole set
           graphDataSet[coinName] = singleGraphData;
-
         }
 
-
-        // // create a graphData object from props.priceHistory for chart.js to render
-        // let rawData = this.props.priceHistoryData[this.props.coinName]; //got to change this to do every coin, put in a for loop
-        // console.log(rawData);
-        // let date;
-        // let labels = [];  // for storing dates
-        // let data = [];  // for storing price history data
-
-        // if(typeof rawData !== 'undefined'){ //check to make sure data has loaded
-        //   // iterate through the data and populate datasets
-        //   for(let i=rawData.length; i>(rawData.length-requestTime-1); i-=skipDay){  //skipping intervals of days/hours to render chart
-        //     //check if index out of bound
-        //     if(typeof rawData[i] !== "undefined"){
-        //       // setting the labels
-        //       date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
-        //       labels.push(date);
-
-        //       //setting the price data
-        //       data.push(rawData[i].close);
-        //     }
-        //   }
-
-        //   // flip the array to go from latest to earliest
-        //   labels = labels.reverse();
-        //   data = data.reverse();
-
-          // database that will be added to graph data object for charts
+        this.props.loadGraphData(graphDataSet);
           
       })
       .catch(err => console.log(err));

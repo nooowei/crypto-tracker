@@ -58,7 +58,7 @@ function CoinCardDisplay(props){
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
             <Container>
-              <CoinDataChart/>
+              <CoinDataChart coinName={props.coinData.coinName}/>
               <MoreInfoTable coinData={props.coinData}/>
             </Container>
 
@@ -74,7 +74,7 @@ class CoinCard extends Component{
     constructor(props){
         super(props);
         this.getCoinData = this.getCoinData.bind(this);
-        this.getHistoricalData = this.getHistoricalData.bind(this);
+        // this.getHistoricalData = this.getHistoricalData.bind(this);
     }
 
     // componentDidMount(){
@@ -167,82 +167,10 @@ class CoinCard extends Component{
       return coinData;
     }
 
-    getHistoricalData(){
-      // console.log(this.props.timeFrame);
-      // API params
-      let requestTime = 0;
-      let requestType = "";
-      let requestCoin = this.props.coinName;
-      let skipDay = 1;  // days/hours to skip while rendering chart
+    // getCoinName(){
+      
 
-      switch(this.props.timeFrame){
-        case "MONTHLY":
-          requestTime = 28;
-          requestType = "histoday"
-          skipDay = 4
-          break;
-        case "WEEKLY":
-          requestTime = 7;
-          requestType = "histoday"
-          skipDay = 1;
-          break;
-        case "DAILY":
-          requestTime = 21;
-          requestType = "histohour"
-          skipDay = 3;
-          break;
-        default:
-          requestTime = 7;
-          requestType = "histoday";
-          skipDay = 1;
-      }
-
-
-      // create a graphData object from props.priceHistory for chart.js to render
-      let rawData = this.props.priceHistoryData[this.props.coinName];
-      console.log(rawData);
-      let date;
-      let labels = [];  // for stroing dates
-      let data = [];  // for stroing price history data
-
-      if(typeof rawData !== 'undefined'){ //check to make sure data has loaded
-        // iterate through the data and populate datasets
-        for(let i=rawData.length; i>(rawData.length-requestTime-1); i-=skipDay){  //skipping intervals of days/hours to render chart
-          //check if index out of bound
-          if(typeof rawData[i] !== "undefined"){
-            // setting the labels
-            date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
-            labels.push(date);
-
-            //setting the price data
-            data.push(rawData[i].close);
-          }
-        }
-
-        // flip the array to go from latest to earliest
-        labels = labels.reverse();
-        data = data.reverse();
-
-        // database that will be added to graph data object for charts
-        let datasets = [{
-          data,
-          backgroundColor: 'rgba(54, 162, 235, 0.6)'
-        }];
-
-        let graphData = {
-          labels,
-          datasets
-        }
-        console.log("here is the graph data");
-        console.log(graphData);
-        // this.props.loadGraphData(graphData); //need to change to an action that edits the graph data
-        return graphData;
-      }else{
-        console.log("undefined priceHistory");
-      }
-
-
-    }
+    // }
 
     // <CoinCardDisplay coinData={this.getCoinData()} getHistoricalData={this.getHistoricalData()}/>
     render(){
