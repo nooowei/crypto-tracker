@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 
 import { Container, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Box} from '@material-ui/core';
-import { List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import MoreInfoTable from './more-info-table.component';
 import CoinDataChart from './chart.component';
-import {loadPriceHistory, chgTimeFrame, loadGraphData} from '../actions/actions';
+import {loadPriceHistory, chgTimeFrame, loadGraphData, changeCurrency} from '../actions/actions';
+import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
 
 //import icons from localfile
 import BCH_Icon from '../img/BCH.png';
@@ -64,6 +65,12 @@ const useStyles = makeStyles(theme => ({
   },
   imgBox:{
     width: "30%"
+  },
+  dot:{
+    alignItem:"left"
+  },
+  text:{
+    maxWidth:"40%"
   }
 }));
 
@@ -137,6 +144,8 @@ function CoinCardDisplay(props){
     default:
       coinIcon = BTC_Icon;
   }
+
+  let dotColour = (props.coinData.chg24Hour>0) ? "62db84" : "f95252";
   return(
     <ExpansionPanel className={classes.root}>
         <ExpansionPanelSummary
@@ -146,7 +155,7 @@ function CoinCardDisplay(props){
         >
           <Grid container spacing={3}>
             <Box className={classes.imgBox}>
-              <img className={classes.img} src={coinIcon}/>
+              <img className={classes.img} src={coinIcon} alt={props.coinData.coinName}/>
             </Box>
 
             <Grid item xs>
@@ -155,10 +164,11 @@ function CoinCardDisplay(props){
                   <ListItemText primary={props.coinData.coinName} />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary={`Price: ${props.coinData.price}`} />
+                  <ListItemText className={classes.text} primary={`Price: ${props.coinData.price} ${props.currency}`} />
+                  <FiberManualRecordRoundedIcon className={classes.dot} style={{ color: `${dotColour}` }}/>
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary={`24 Hour Change: ${props.coinData.chg24Hour}`} />
+                  <ListItemText className={classes.text} primary={`24 Hour Change: ${props.coinData.chg24Hour}`} />
                 </ListItem>
               </List>
             </Grid>
@@ -168,6 +178,7 @@ function CoinCardDisplay(props){
         <ExpansionPanelDetails>
             <Container>
               <CoinDataChart coinName={props.coinData.coinName}/>
+
               <MoreInfoTable coinData={props.coinData}/>
             </Container>
 
@@ -183,6 +194,7 @@ class CoinCard extends Component{
     constructor(props){
         super(props);
         this.getCoinData = this.getCoinData.bind(this);
+        // this.chgTime = this.chgTime.bind(this);
         // this.getHistoricalData = this.getHistoricalData.bind(this);
     }
 
@@ -276,9 +288,10 @@ class CoinCard extends Component{
       return coinData;
     }
 
+
     render(){
         return (
-          <CoinCardDisplay coinData={this.getCoinData()}/>
+          <CoinCardDisplay coinData={this.getCoinData()} currency={this.props.currencyData}/>
         )
     }
 
@@ -297,7 +310,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = dispatch => ({
   loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData)),
   chgTimeFrame: timeFrame => dispatch(chgTimeFrame(timeFrame)),
-  loadGraphData: graphData => dispatch(loadGraphData(graphData))
+  loadGraphData: graphData => dispatch(loadGraphData(graphData)),
+  changeCurrency: currency => dispatch(changeCurrency(currency))
 })
 
 export default connect(

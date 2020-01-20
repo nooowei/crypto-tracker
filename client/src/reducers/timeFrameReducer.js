@@ -1,5 +1,5 @@
 // loading the user data once retrieved from backend DB
-const timeFrameData = (state = "WEEKLY", action) => {
+const timeFrameData = (state = "MONTHLY", action) => {
     switch (action.type) {
       case "CHG_TIMEFRAME":
         return action.timeFrame;
