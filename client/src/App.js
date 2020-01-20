@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route} from "react-router-dom";
 import { Provider } from 'react-redux';
 
 import CardsContainer from './components/cards-container.component';
-import Header from './components/header.component';
+// import Header from './components/header.component';
 
 import store from './store';
 

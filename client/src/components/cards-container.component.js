@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Paper, Typography, Button } from '@material-ui/core';
+import { Container, Paper, Typography} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux'
 import {loadUser, loadCoin, changeCurrency, loadPriceHistory, loadGraphData} from '../actions/actions';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
+// import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
@@ -33,6 +33,7 @@ function MakeCoinCard(props) {
     <Paper elevation={3} className={classes.paper}>
       <CoinCard coinName={props.coinName}/>
     </Paper>
+    
   )
 
 }
@@ -87,7 +88,7 @@ class CardsContainer extends Component{
       axios.get(initialLoadURL).then(res =>{
       this.props.loadCoin(res.data.RAW);
       console.log("Updated Price");
-      })}, 500000); // will set the timer lower later
+      })}, 50000); // will set the timer lower later
 
     //get price History for all coins
     this.getHistoricalData();
