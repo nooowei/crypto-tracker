@@ -49,6 +49,7 @@ class CardsContainer extends Component{
     super(props);
     this.state={
       coinArr: ["BTC","BCH","ETH","ETC","BSV"]
+      // coinArr: ["BTC","BCH","ETH","ETC","BSV","EOS","XRP","LTC","DASH","TUSD","ZEC","PAX","TRX","XMR","ADA","NEO","ATOM","BNB","XLM","LINK"]
     }
   }
 
