@@ -45,7 +45,7 @@ function CoinDataChart(props){
                       position:'right'
                     },
                     animation: {
-                      duration: 10000,
+                      duration: 20000,
 
 
                   }

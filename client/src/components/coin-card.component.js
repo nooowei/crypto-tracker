@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Container, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails} from '@material-ui/core';
+import { Container, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Box} from '@material-ui/core';
 import { List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -37,6 +37,7 @@ import XLM_Icon from '../img/XLM.png';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
+    flexGrow: 1
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -48,8 +49,21 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   img: {
-    width: '10%',
+    margin: '2.5em',
+    width: '40%',
     maxwidth: 100
+  },
+  button:{
+    background: 'linear-gradient(45deg, #ea93b0 30%, #f7c4aa 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    // padding: '0 30px',
+  },
+  imgBox:{
+    width: "30%"
   }
 }));
 
@@ -130,21 +144,25 @@ function CoinCardDisplay(props){
         aria-controls="panel1a-content"
         id="panel1a-header"
         >
-          <Container>
-            <img className={classes.img} src={coinIcon}/>
+          <Grid container spacing={3}>
+            <Box className={classes.imgBox}>
+              <img className={classes.img} src={coinIcon}/>
+            </Box>
 
-            <List component="nav" aria-label="secondary mailbox folders">
-              <ListItem button>
-                <ListItemText primary={props.coinData.coinName} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={`Price: ${props.coinData.price}`} />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={`24 Hour Change: ${props.coinData.chg24Hour}`} />
-              </ListItem>
-            </List>
-          </Container>
+            <Grid item xs>
+              <List component="nav" aria-label="secondary mailbox folders">
+                <ListItem button className={classes.button}>
+                  <ListItemText primary={props.coinData.coinName} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary={`Price: ${props.coinData.price}`} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary={`24 Hour Change: ${props.coinData.chg24Hour}`} />
+                </ListItem>
+              </List>
+            </Grid>
+          </Grid>
 
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container } from '@material-ui/core';
+import { Container, Paper } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux'
 import {loadUser, loadCoin, changeCurrency, loadPriceHistory, loadGraphData} from '../actions/actions';
 
@@ -9,6 +10,39 @@ import {loadUser, loadCoin, changeCurrency, loadPriceHistory, loadGraphData} fro
 import CoinCard from './coin-card.component';
 // import graphData from '../reducers/graphDataReducer';
 
+const useStyles = makeStyles(theme => ({
+  // root: {
+  //   flexGrow: 1,
+  // },
+  // paper: {
+  //   padding: theme.spacing(2),
+  //   margin: 'auto',
+  //   maxWidth: 500,
+  // },
+  // image: {
+  //   width: 128,
+  //   height: 128,
+  // },
+  // img: {
+  //   margin: 'auto',
+  //   display: 'block',
+  //   maxWidth: '100%',
+  //   maxHeight: '100%',
+  // },
+  paper:{
+    margin: '10px'
+  }
+}));
+
+function MakeCoinCard(props) {
+  const classes = useStyles();
+  return(
+    <Paper elevation={3} className={classes.paper}>
+      <CoinCard coinName={props.coinName}/>
+    </Paper>
+  )
+
+}
 // CONTAINER component
 class CardsContainer extends Component{
   constructor(props){
@@ -150,7 +184,7 @@ class CardsContainer extends Component{
         <Container maxWidth="md">
           <p>{this.props.currencyData} </p>
           {this.state.coinArr.map(coinName =>
-            <CoinCard coinName={coinName}></CoinCard>
+            <MakeCoinCard coinName={coinName}/>
             )}
         </Container>
       </div>
