@@ -9,7 +9,7 @@ router.get('/ping', function(req, res, next) {
   res.json({"success" : true});
 });
 
-router.post('/login', function(req.res.next){
+router.post('/login', function(req,res,next){
   res.json({msg: "Success!"});
 })
 

@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import {loadUser, loadCoin, changeCurrency, loadPriceHistory, loadGraphData} from '../actions/actions';
 
 import CoinCard from './coin-card.component';
+import graphData from '../reducers/graphDataReducer';
 
 // CONTAINER component
 class CardsContainer extends Component{
@@ -49,8 +50,112 @@ class CardsContainer extends Component{
 
         console.log(priceHistory);
 
-        this.props.loadPriceHistory(priceHistory);
-      })).catch(err => console.log(err));
+        this.props.loadPriceHistory(priceHistory);  //this is working
+      }))
+      .then(()=>{
+        // this variable will be passed into redux store with loadGraphData method
+        // containing a collection of all graph datas
+        let graphDataSet = {};
+
+        // this is the graph data for each coin, will be append into graphDataSet with name references
+        let singleGraphData = {};
+
+        let requestTime = 0;
+        let requestType = "";
+        // let requestCoin = this.props.coinName;
+        let skipDay = 1;  // days/hours to skip while rendering chart
+
+        switch(this.props.timeFrame){ //default to WEEKLY
+          case "MONTHLY":
+            requestTime = 28;
+            requestType = "histoday"
+            skipDay = 4
+            break;
+          case "WEEKLY":
+            requestTime = 7;
+            requestType = "histoday"
+            skipDay = 1;
+            break;
+          case "DAILY":
+            requestTime = 21;
+            requestType = "histohour"
+            skipDay = 3;
+            break;
+          default:
+            requestTime = 7;
+            requestType = "histoday";
+            skipDay = 1;
+        }
+
+        // creating a singleGraphData for each coin, and add to graphDataSet
+        for(let i = 0; i<this.state.coinArr.length; i++){
+          let coinName = this.state.coinArr[i];
+          let rawData = this.props.priceHistoryData[coinName]; //got to change this to do every coin, put in a for loop
+          console.log(rawData); // make sure it's getting the right historical data
+          let date;
+          let labels = [];  // for storing dates
+          let data = [];  // for storing price history data
+
+          for(let i=rawData.length; i>(rawData.length-requestTime-1); i-=skipDay){  //skipping intervals of days/hours to render chart
+            //check if index out of bound
+            if(typeof rawData[i] !== "undefined"){
+              // setting the labels
+              date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
+              labels.push(date);
+
+              //setting the price data
+              data.push(rawData[i].close);
+            }
+          }
+
+          // flip the array to go from latest to earliest
+          labels = labels.reverse();
+          data = data.reverse();
+
+          let datasets = [{
+            data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+          }];
+
+          singleGraphData = {
+            labels,
+            datasets
+          }
+
+          graphDataSet[coinName] = singleGraphData;
+
+        }
+
+
+        // // create a graphData object from props.priceHistory for chart.js to render
+        // let rawData = this.props.priceHistoryData[this.props.coinName]; //got to change this to do every coin, put in a for loop
+        // console.log(rawData);
+        // let date;
+        // let labels = [];  // for storing dates
+        // let data = [];  // for storing price history data
+
+        // if(typeof rawData !== 'undefined'){ //check to make sure data has loaded
+        //   // iterate through the data and populate datasets
+        //   for(let i=rawData.length; i>(rawData.length-requestTime-1); i-=skipDay){  //skipping intervals of days/hours to render chart
+        //     //check if index out of bound
+        //     if(typeof rawData[i] !== "undefined"){
+        //       // setting the labels
+        //       date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
+        //       labels.push(date);
+
+        //       //setting the price data
+        //       data.push(rawData[i].close);
+        //     }
+        //   }
+
+        //   // flip the array to go from latest to earliest
+        //   labels = labels.reverse();
+        //   data = data.reverse();
+
+          // database that will be added to graph data object for charts
+          
+      })
+      .catch(err => console.log(err));
 
   }
 
@@ -87,8 +192,8 @@ const mapDispatchToProps = dispatch => ({
   loadCoin: coins => dispatch(loadCoin(coins)),
   loadUser: user => dispatch(loadUser(user)),
   changeCurrency: currency => dispatch(changeCurrency(currency)),
-  loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData))
-  // loadGraphData: graphData => dispatch(loadGraphData(graphData))
+  loadPriceHistory: hisData => dispatch(loadPriceHistory(hisData)),
+  loadGraphData: graphData => dispatch(loadGraphData(graphData))
 })
 
 export default connect(

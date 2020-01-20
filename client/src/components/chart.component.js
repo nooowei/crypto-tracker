@@ -32,7 +32,7 @@ function CoinDataChart(props){
     return(
         <div className="chart">
             <Line
-                data={props.graphData}
+                data={props.getHistoricalData}
                 options={{
                     title:{
                     display:true,

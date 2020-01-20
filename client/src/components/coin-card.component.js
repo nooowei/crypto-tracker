@@ -77,9 +77,9 @@ class CoinCard extends Component{
         this.getHistoricalData = this.getHistoricalData.bind(this);
     }
 
-    componentDidMount(){
-      this.getHistoricalData();
-    }
+    // componentDidMount(){
+    //   this.getHistoricalData();
+    // }
 
     //combine all data into an object and pass it into the View Component
     getCoinData(){
@@ -233,48 +233,13 @@ class CoinCard extends Component{
           labels,
           datasets
         }
+        console.log("here is the graph data");
         console.log(graphData);
-        this.props.loadGraphData(graphData); //need to change to an action that edits the graph data
+        // this.props.loadGraphData(graphData); //need to change to an action that edits the graph data
+        return graphData;
       }else{
-        
+        console.log("undefined priceHistory");
       }
-
-      // let requestString = `https://min-api.cryptocompare.com/data/v2/${requestType}?fsym=${requestCoin}&tsym=USD&limit=${requestTime}`;
-
-      // axios.get(requestString).then(res => {
-      //   // console.log(res.data.Data.Data);
-      //   // get info from data, and format into an object and pass into props
-      //   let rawData = res.data.Data.Data;
-
-      //   let date;
-      //   let labels = [];  // for stroing dates
-      //   let data = [];  // for stroing price history data
-
-      //   // iterate through the data and populate datasets
-      //   for(let i=requestTime; i>0; i-=skipDay){  //skipping intervals of days/hours to render chart
-      //     // setting the labels
-      //     date = new Date(rawData[i].time * 1000).toString().substring(4, 10); // leaving just the month and day
-      //     labels.push(date);
-
-      //     //setting the price data
-      //     data.push(rawData[i].close);
-      //   }
-
-      //   // database that will be added to graph data object for charts
-      //   let datasets = [{
-      //     data,
-      //     backgroundColor: 'rgba(54, 162, 235, 0.6)'
-      //   }];
-
-      //   let graphData = {
-      //     labels,
-      //     datasets
-      //   }
-      //   // console.log(graphData);
-      //   this.props.loadPriceHistory(graphData);
-      // }
-      // ).catch(err => console.log(err));
-
 
 
     }

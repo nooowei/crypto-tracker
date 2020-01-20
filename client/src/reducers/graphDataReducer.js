@@ -5,7 +5,7 @@ let initialState = {
     }]
 }
 
-const graphData = (state = initialState, action) => {
+const graphData = (state = {}, action) => {
     switch (action.type){
         case "LOAD_GRAPHDATA":
             return action.graphData;
