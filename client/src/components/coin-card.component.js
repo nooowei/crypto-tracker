@@ -1,17 +1,37 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-// import { Link } from 'react-router-dom';
-import { Container, Typography, Paper, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails} from '@material-ui/core';
+
+import { Container, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails} from '@material-ui/core';
 import { List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
-// import { Table, TableBody, TableCell, TableContainer, TableFooter, TablePagination, TableRow, IconButton} from '@material-ui/core';
-// import { FirstPageIcon, KeyboardArrowLeft, KeyboardArrowRight, LastPageIcon} from '@material-ui/icons';
 import { connect } from 'react-redux';
-import { styled, makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import MoreInfoTable from './more-info-table.component';
 import CoinDataChart from './chart.component';
 import {loadPriceHistory, chgTimeFrame, loadGraphData} from '../actions/actions';
+
+//import icons from localfile
+import BCH_Icon from '../img/BCH.png';
+import BTC_Icon from '../img/BTC.png';
+import ETH_Icon from '../img/ETH.png';
+import ETC_Icon from '../img/ETC.png';
+import BSV_Icon from '../img/BSV.png';
+import EOS_Icon from '../img/EOS.png';
+import XRP_Icon from '../img/XRP.png';
+import LTC_Icon from '../img/LTC.png';
+import DASH_Icon from '../img/DASH.png';
+import TUSD_Icon from '../img/TUSD.png';
+import ZEC_Icon from '../img/ZEC.png';
+import PAX_Icon from '../img/PAX.png';
+import TRX_Icon from '../img/TRX.png';
+import XMR_Icon from '../img/XMR.png';
+import ADA_Icon from '../img/ADA.png';
+import NEO_Icon from '../img/NEO.png';
+import ATOM_Icon from '../img/ATOM.png';
+import BNB_Icon from '../img/BNB.png';
+import LINK_Icon from '../img/LINK.png';
+import XLM_Icon from '../img/XLM.png';
+
 
 // this is Styled Component API using hooks
 const useStyles = makeStyles(theme => ({
@@ -26,12 +46,83 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
+  },
+  img: {
+    width: '10%',
+    maxwidth: 100
   }
 }));
 
 // VIEW component
 function CoinCardDisplay(props){
   const classes = useStyles();
+  
+  //setting the coin icons
+  let coinIcon;
+  switch(props.coinData.coinName){
+    case "BTC":
+      coinIcon = BTC_Icon;
+      break;
+    case "BCH":
+      coinIcon = BCH_Icon;
+      break;
+    case "ETH":
+      coinIcon = ETH_Icon;
+      break;
+    case "ETC":
+      coinIcon = ETC_Icon;
+      break;
+    case "BSV":
+      coinIcon = BSV_Icon;
+      break;
+    case "EOS":
+      coinIcon = EOS_Icon;
+      break;
+    case "XRP":
+      coinIcon = XRP_Icon;
+      break;
+    case "LTC":
+      coinIcon = LTC_Icon;
+      break;
+    case "DASH":
+      coinIcon = DASH_Icon;
+      break;
+    case "TUSD":
+      coinIcon = TUSD_Icon;
+      break;
+    case "ZEC":
+      coinIcon = ZEC_Icon;
+      break;
+    case "PAX":
+      coinIcon = PAX_Icon;
+      break;
+    case "TRX":
+      coinIcon = TRX_Icon;
+      break;
+    case "XMR":
+      coinIcon = XMR_Icon;
+      break;
+    case "ADA":
+      coinIcon = ADA_Icon;
+      break;
+    case "NEO":
+      coinIcon = NEO_Icon;
+      break;
+    case "ATOM":
+      coinIcon = ATOM_Icon;
+      break;
+    case "BNB":
+      coinIcon = BNB_Icon;
+      break;
+    case "XLM":
+      coinIcon = XLM_Icon;
+      break;
+    case "LINK":
+      coinIcon = LINK_Icon;
+      break;
+    default:
+      coinIcon = BTC_Icon;
+  }
   return(
     <ExpansionPanel className={classes.root}>
         <ExpansionPanelSummary
@@ -40,9 +131,9 @@ function CoinCardDisplay(props){
         id="panel1a-header"
         >
           <Container>
-            <p>coin icons go here</p>
+            <img className={classes.img} src={coinIcon}/>
 
-            <List button component="nav" aria-label="secondary mailbox folders">
+            <List component="nav" aria-label="secondary mailbox folders">
               <ListItem button>
                 <ListItemText primary={props.coinData.coinName} />
               </ListItem>
@@ -167,12 +258,6 @@ class CoinCard extends Component{
       return coinData;
     }
 
-    // getCoinName(){
-      
-
-    // }
-
-    // <CoinCardDisplay coinData={this.getCoinData()} getHistoricalData={this.getHistoricalData()}/>
     render(){
         return (
           <CoinCardDisplay coinData={this.getCoinData()}/>

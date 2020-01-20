@@ -1,9 +1,3 @@
-let initialState = {
-    labels:[" "," "," "," "," "," "," "],
-    datasets:[{
-        data:[0,0,0,0,0,0,0]
-    }]
-}
 
 const graphData = (state = {}, action) => {
     switch (action.type){

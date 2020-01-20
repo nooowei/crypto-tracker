@@ -43,7 +43,12 @@ function CoinDataChart(props){
                     legend:{
                       display:false,
                       position:'right'
-                    }
+                    },
+                    animation: {
+                      duration: 10000,
+
+
+                  }
                 }}
                 />
 
