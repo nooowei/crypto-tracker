@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var axios = require('axios');
+// var axios = require('axios');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -22,14 +22,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// const uri = process.env.MONGOLAB_URI;
-const uri = config.get('MONGOLAB_URI');
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
-);
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log("MongoDB database connection established successfully");
-})
+// // const uri = process.env.MONGOLAB_URI;
+// const uri = config.get('MONGOLAB_URI');
+// mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
+// );
+// const connection = mongoose.connection;
+// connection.once('open', () => {
+//   console.log("MongoDB database connection established successfully");
+// })
 
 
 app.use('/', indexRouter);
@@ -50,6 +50,18 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+//serve static asset if in production
+if(process.env.NODE_ENV === 'production'){
+  console.log("Production environment. Serving static asset from client/build.");
+  // Set static folder
+  app.use(express.static('client/build'));
+
+  // server will serve up index.html in the build folder if in production
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  })
+}
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
